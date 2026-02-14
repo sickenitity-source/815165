@@ -54,16 +54,22 @@ button:hover {
     border-radius: 50%;
     opacity: 0.5;
 }
-#shivImg {
-    width: 200px;
-    margin-top: 20px;
+#moon {
+    position: absolute;
+    top: 10%;
+    right: 10%;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, #ffffff, #cccccc 70%);
+    box-shadow: 0 0 60px 15px rgba(255,255,255,0.5);
 }
 </style>
 </head>
 <body>
 
+<div id="moon"></div>
 <h1>🌙 Shivratri Blessings for Pratiksha</h1>
-<img id="shivImg" src="https://upload.wikimedia.org/wikipedia/commons/5/5a/Shiva_trishul.png" alt="Shivji with Trisul">
 <div id="blessing">Click the button to receive your blessing ✨</div>
 <button onclick="generateBlessing()">Reveal Blessing</button>
 
@@ -103,7 +109,7 @@ let blessings = [
     "Pratiksha, may Lord Shiva bless you with happiness, courage, and endless inspiration.",
     "May this Shivratri bring peace, prosperity, and divine light to Pratiksha's life.",
     "Pratiksha, may the grace of Shivji guide you and fill your heart with joy.",
-    "On this auspicious night, Pratiksha, may you feel the serenity and strength of the Trisul.",
+    "On this auspicious night, Pratiksha, may you feel the serenity and strength of the divine moon.",
     "Pratiksha, may Lord Shiva protect you from all obstacles and shower you with blessings.",
     "May the divine vibration of Mahadev tonight bring endless positivity to Pratiksha’s world."
 ];
