@@ -18,14 +18,12 @@ body {
     overflow: hidden;
     position: relative;
 }
-
 h1 {
     font-size: 42px;
     margin-bottom: 30px;
     color: #b76e79;
     text-shadow: 1px 1px 8px white;
 }
-
 #blessing {
     font-size: 24px;
     max-width: 600px;
@@ -33,7 +31,6 @@ h1 {
     color: white;
     text-shadow: 1px 1px 6px #b76e79;
 }
-
 button {
     padding: 12px 25px;
     font-size: 18px;
@@ -50,7 +47,6 @@ button:hover {
     color: #b76e79;
     box-shadow: 0 0 12px #b76e79;
 }
-
 .star {
     position: absolute;
     background: white;
@@ -69,56 +65,79 @@ button:hover {
 <body>
 
 <h1>🌙 A Blessing for You, Pratiksha</h1>
-<div id="blessing"></div>
+<div id="blessing">Click the button to receive your blessing ✨</div>
 <button onclick="generateBlessing()">Reveal Blessing</button>
 
 <script>
-// Blessings
-const blessings = [
-    "May your strength rise quietly like the Himalayas.",
-    "May your heart stay peaceful even in chaos.",
-    "May you always feel protected and valued.",
-    "May your light never dim, even on your hardest days.",
-    "Tonight, I silently pray for your happiness."
-];
-
-// Typing effect
-function typeWriter(text, i = 0) {
-    if(i < text.length) {
-        document.getElementById("blessing").innerHTML += text.charAt(i);
-        setTimeout(()=>typeWriter(text,i+1),40);
-    }
-}
-function generateBlessing() {
-    const randomIndex = Math.floor(Math.random() * blessings.length);
-    const message = blessings[randomIndex];
-    document.getElementById("blessing").innerHTML = "";
-    typeWriter(message);
-}
-
-// Function to create stars forming "P" for Pratiksha
-function createStar(x, y, size=2, delay=0) {
-    let star = document.createElement("div");
-    star.className = "star";
-    star.style.left = x + "%";
-    star.style.top = y + "%";
-    star.style.width = star.style.height = size + "px";
-    star.style.animationDelay = delay + "s";
-    document.body.appendChild(star);
-    star.style.opacity = 1;
-}
-
-// Generate random stars for background
+// Stars background
 for(let i=0;i<50;i++){
-    createStar(Math.random()*100, Math.random()*100, Math.random()*2+1, Math.random()*5);
+    let star=document.createElement("div");
+    star.className="star";
+    star.style.top=Math.random()*100+"%";
+    star.style.left=Math.random()*100+"%";
+    star.style.width=star.style.height=(Math.random()*2+1)+"px";
+    star.style.animationDuration=(Math.random()*5+3)+"s";
+    document.body.appendChild(star);
 }
 
-// Generate faint "P" constellation
+// P initials constellation
 const pCoords = [
     [30,30],[30,35],[30,40],[30,45],[30,50],
     [35,30],[40,30],[45,35],[45,40],[40,45],[35,45]
 ];
-pCoords.forEach(([x,y],i)=>createStar(x,y,2,i*0.1));
+pCoords.forEach(([x,y],i)=>{
+    let star=document.createElement("div");
+    star.className="star";
+    star.style.left=x+"%";
+    star.style.top=y+"%";
+    star.style.opacity=1;
+    document.body.appendChild(star);
+});
+
+// Personalized blessings
+let blessings = [
+    "Pratiksha, may your laughter ripple through every corner of your day and light up the world around you.",
+    "May Pratiksha’s heart always feel the gentle warmth of love, peace, and quiet joy wherever she goes.",
+    "Pratiksha, every star tonight carries a wish for your happiness, courage, and endless inspiration.",
+    "May the winds of this night whisper serenity to Pratiksha and guide her toward her dreams.",
+    "Pratiksha, may each step you take today be cushioned with hope, laughter, and grace.",
+    "As the moon glows, Pratiksha, may your inner light shine even brighter and touch those around you.",
+    "Pratiksha, may every challenge transform into a path of opportunity and strength for you tonight.",
+    "Tonight, Pratiksha, may the universe gently remind you how extraordinary and valued you truly are.",
+    "Pratiksha, may soft moments of joy find you unexpectedly and make your heart swell with happiness.",
+    "May Pratiksha’s spirit always dance freely, unshaken by worries, embraced by love and calm."
+];
+
+// Shuffle blessings
+function shuffle(array){
+    for(let i=array.length-1;i>0;i--){
+        let j=Math.floor(Math.random()*(i+1));
+        [array[i],array[j]]=[array[j],array[i]];
+    }
+    return array;
+}
+blessings = shuffle(blessings);
+let used = [];
+
+// Typing effect
+function typeWriter(text,i=0){
+    if(i<text.length){
+        document.getElementById("blessing").innerHTML += text.charAt(i);
+        setTimeout(()=>typeWriter(text,i+1),40);
+    }
+}
+
+// Generate a new blessing
+function generateBlessing(){
+    if(blessings.length === 0){
+        blessings = shuffle(used);
+        used = [];
+    }
+    const message = blessings.shift();
+    used.push(message);
+    document.getElementById("blessing").innerHTML = "";
+    typeWriter(message);
+}
 </script>
 
 </body>
