@@ -2,153 +2,110 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Shivratri Blessing for Pratiksha</title>
+<title>Shivratri Blessings for Pratiksha</title>
 <style>
 body {
     margin: 0;
     height: 100vh;
     background: linear-gradient(135deg, #1e3a8a, #ffffff, #b76e79);
-    display: flex;
-    justify-content: center;
-    align-items: center;
     overflow: hidden;
     font-family: Arial, sans-serif;
     color: white;
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 h1 {
-    position: absolute;
-    top: 20px;
-    width: 100%;
-    text-align: center;
-    font-size: 36px;
+    font-size: 42px;
+    margin-bottom: 20px;
     color: #b76e79;
     text-shadow: 1px 1px 8px white;
 }
 #blessing {
-    position: absolute;
-    bottom: 50px;
-    width: 80%;
     font-size: 24px;
+    max-width: 600px;
+    min-height: 50px;
     text-shadow: 1px 1px 6px #b76e79;
-}
-canvas {
-    position: absolute;
+    margin-top: 20px;
 }
 button {
-    position: absolute;
-    bottom: 10px;
-    padding: 10px 20px;
+    padding: 12px 25px;
     font-size: 18px;
+    background-color: #b76e79;
+    color: white;
     border: none;
     border-radius: 8px;
-    background: #b76e79;
-    color: white;
     cursor: pointer;
+    margin-top: 20px;
     transition: 0.3s;
 }
 button:hover {
-    background: white;
+    background-color: white;
     color: #b76e79;
     box-shadow: 0 0 12px #b76e79;
+}
+.star {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: white;
+    border-radius: 50%;
+    opacity: 0.5;
+}
+#shivImg {
+    width: 200px;
+    margin-top: 20px;
 }
 </style>
 </head>
 <body>
 
-<h1>🌙 Blessings for Pratiksha</h1>
+<h1>🌙 Shivratri Blessings for Pratiksha</h1>
+<img id="shivImg" src="https://upload.wikimedia.org/wikipedia/commons/5/5a/Shiva_trishul.png" alt="Shivji with Trisul">
 <div id="blessing">Click the button to receive your blessing ✨</div>
 <button onclick="generateBlessing()">Reveal Blessing</button>
-<canvas id="starCanvas"></canvas>
 
 <script>
-// ===== Canvas setup =====
-const canvas = document.getElementById('starCanvas');
-const ctx = canvas.getContext('2d');
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-
-// ===== Draw stars forming text =====
-function drawTextStars(text) {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.font = "bold 120px Arial";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    
-    // get text pixel data
-    const offCanvas = document.createElement("canvas");
-    offCanvas.width = canvas.width;
-    offCanvas.height = canvas.height;
-    const offCtx = offCanvas.getContext("2d");
-    offCtx.font = "bold 120px Arial";
-    offCtx.textAlign = "center";
-    offCtx.textBaseline = "middle";
-    offCtx.fillText(text, canvas.width/2, canvas.height/2);
-    
-    const imageData = offCtx.getImageData(0,0,canvas.width,canvas.height);
-    for(let y=0; y<canvas.height; y+=6){ // spacing between stars
-        for(let x=0; x<canvas.width; x+=6){
-            const i = (y*canvas.width + x) * 4;
-            if(imageData.data[i+3] > 128){ // alpha channel > 128
-                ctx.beginPath();
-                ctx.arc(x, y, 2, 0, Math.PI*2);
-                ctx.fillStyle = "#b76e79";
-                ctx.shadowColor = "#b76e79";
-                ctx.shadowBlur = 6;
-                ctx.fill();
-            }
-        }
-    }
+// ===== Floating stars =====
+const stars = [];
+for(let i=0;i<100;i++){
+    const star = document.createElement("div");
+    star.className = "star";
+    star.style.top = Math.random()*window.innerHeight + "px";
+    star.style.left = Math.random()*window.innerWidth + "px";
+    star.speedX = (Math.random()-0.5)*0.5;
+    star.speedY = (Math.random()-0.5)*0.5;
+    document.body.appendChild(star);
+    stars.push(star);
 }
 
-// ===== Random floating stars =====
-const floatingStars = [];
-for(let i=0;i<50;i++){
-    floatingStars.push({
-        x: Math.random()*canvas.width,
-        y: Math.random()*canvas.height,
-        r: Math.random()*2+1,
-        dx: (Math.random()-0.5)*0.5,
-        dy: (Math.random()-0.5)*0.5
+function moveStars(){
+    stars.forEach(s => {
+        let x = parseFloat(s.style.left);
+        let y = parseFloat(s.style.top);
+        x += s.speedX;
+        y += s.speedY;
+        if(x<0) x=window.innerWidth;
+        if(x>window.innerWidth) x=0;
+        if(y<0) y=window.innerHeight;
+        if(y>window.innerHeight) y=0;
+        s.style.left = x + "px";
+        s.style.top = y + "px";
     });
+    requestAnimationFrame(moveStars);
 }
-
-function drawFloatingStars(){
-    ctx.fillStyle = "white";
-    floatingStars.forEach(s => {
-        ctx.beginPath();
-        ctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
-        ctx.fill();
-        s.x += s.dx;
-        s.y += s.dy;
-        if(s.x<0) s.x=canvas.width;
-        if(s.x>canvas.width) s.x=0;
-        if(s.y<0) s.y=canvas.height;
-        if(s.y>canvas.height) s.y=0;
-    });
-}
-
-// ===== Animation loop =====
-function animate(){
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-    drawTextStars("PRATIKSHA");
-    drawFloatingStars();
-    requestAnimationFrame(animate);
-}
-animate();
+moveStars();
 
 // ===== Personalized blessings =====
 let blessings = [
-    "Pratiksha, may your laughter ripple through every corner of your day and light up the world around you.",
-    "May Pratiksha’s heart always feel the gentle warmth of love, peace, and quiet joy wherever she goes.",
-    "Pratiksha, every star tonight carries a wish for your happiness, courage, and endless inspiration.",
-    "May the winds of this night whisper serenity to Pratiksha and guide her toward her dreams.",
-    "Pratiksha, may each step you take today be cushioned with hope, laughter, and grace.",
-    "As the moon glows, Pratiksha, may your inner light shine even brighter and touch those around you.",
-    "Pratiksha, may every challenge transform into a path of opportunity and strength for you tonight.",
-    "Tonight, Pratiksha, may the universe gently remind you how extraordinary and valued you truly are.",
-    "Pratiksha, may soft moments of joy find you unexpectedly and make your heart swell with happiness.",
-    "May Pratiksha’s spirit always dance freely, unshaken by worries, embraced by love and calm."
+    "Pratiksha, may Lord Shiva bless you with happiness, courage, and endless inspiration.",
+    "May this Shivratri bring peace, prosperity, and divine light to Pratiksha's life.",
+    "Pratiksha, may the grace of Shivji guide you and fill your heart with joy.",
+    "On this auspicious night, Pratiksha, may you feel the serenity and strength of the Trisul.",
+    "Pratiksha, may Lord Shiva protect you from all obstacles and shower you with blessings.",
+    "May the divine vibration of Mahadev tonight bring endless positivity to Pratiksha’s world."
 ];
 
 function shuffle(array){
