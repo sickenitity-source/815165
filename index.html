@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Shivratri Sky Blessing</title>
+<style>
+body {
+    margin: 0;
+    height: 100vh;
+    background: radial-gradient(circle at center, #1a1a2e, #0f0c29);
+    color: white;
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    overflow: hidden;
+}
+
+h1 {
+    margin-bottom: 30px;
+}
+
+#blessing {
+    font-size: 24px;
+    min-height: 40px;
+    max-width: 600px;
+}
+
+button {
+    padding: 12px 25px;
+    font-size: 18px;
+    background-color: #6c5ce7;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+button:hover {
+    background-color: #8c7ae6;
+}
+</style>
+</head>
+<body>
+
+<h1>🌙 A Blessing for You</h1>
+<div id="blessing"></div>
+<button onclick="generateBlessing()">Reveal Blessing</button>
+
+<script>
+const blessings = [
+    "May your strength rise quietly like the Himalayas.",
+    "May your heart stay peaceful even in chaos.",
+    "May you always feel protected and valued.",
+    "May your light never dim, even on your hardest days.",
+    "Tonight, I silently pray for your happiness."
+];
+
+function typeWriter(text, i = 0) {
+    if (i < text.length) {
+        document.getElementById("blessing").innerHTML += text.charAt(i);
+        setTimeout(() => typeWriter(text, i + 1), 40);
+    }
+}
+
+function generateBlessing() {
+    const randomIndex = Math.floor(Math.random() * blessings.length);
+    const message = blessings[randomIndex];
+    document.getElementById("blessing").innerHTML = "";
+    typeWriter(message);
+}
+</script>
+
+</body>
+</html>
