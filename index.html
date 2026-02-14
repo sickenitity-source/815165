@@ -53,7 +53,7 @@ button:hover {
     border-radius: 50%;
     width: 2px;
     height: 2px;
-    opacity: 0;
+    opacity: 0.5;
     animation: twinkle 5s infinite;
     transition: opacity 2s;
 }
@@ -98,30 +98,28 @@ pCoords.forEach(([x,y])=>{
     document.body.appendChild(star);
 });
 
-// ===== Hidden full name constellation =====
-const nameCoords = [
-  [20,30],[22,30],[24,30],[26,30],[28,30], // P
-  [30,30],[32,30],[34,30],[36,30], // r
-  [38,30],[40,30],[42,30],[44,30], // a
-  [46,30],[48,30],[50,30],[52,30], // t
-  [54,30],[56,30],[58,30], // i
-  [60,30],[62,30],[64,30],[66,30], // k
-  [68,30],[70,30],[72,30], // s
-  [74,30],[76,30],[78,30],[80,30] // h + a
+// ===== Visible full name constellation for testing =====
+const letters = [
+  [50,10],[50,12],[50,14],[50,16],[50,18], // P
+  [55,10],[55,12],[55,14],[55,16],[55,18], // R
+  [60,10],[60,12],[60,14],[60,16],[60,18], // A
+  [65,10],[65,12],[65,14],[65,16],[65,18], // T
+  [70,10],[70,12],[70,14],[70,16],[70,18], // I
+  [75,10],[75,12],[75,14],[75,16],[75,18], // K
+  [80,10],[80,12],[80,14],[80,16],[80,18], // S
+  [85,10],[85,12],[85,14],[85,16],[85,18], // H
+  [90,10],[90,12],[90,14],[90,16],[90,18]  // A
 ];
-nameCoords.forEach(([x,y],i)=>{
+
+letters.forEach(([x,y])=>{
     let star = document.createElement("div");
     star.className = "star";
     star.style.left = x+"%";
     star.style.top = y+"%";
-    star.style.width = star.style.height = "2px";
-    star.style.opacity = 0; // hidden initially
+    star.style.width = star.style.height = "4px"; // bigger for clarity
+    star.style.opacity = 1; // fully visible for testing
+    star.style.boxShadow = "0 0 8px #b76e79"; // soft glow
     document.body.appendChild(star);
-    
-    // slowly reveal stars for careful observers
-    setTimeout(()=>{
-        star.style.opacity = 0.7;
-    }, 5000 + i*200); // starts after 5s, staggered
 });
 
 // ===== Personalized blessings =====
