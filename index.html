@@ -55,6 +55,7 @@ button:hover {
     height: 2px;
     opacity: 0;
     animation: twinkle 5s infinite;
+    transition: opacity 2s;
 }
 @keyframes twinkle {
     0%, 100% {opacity: 0.2;}
@@ -69,32 +70,61 @@ button:hover {
 <button onclick="generateBlessing()">Reveal Blessing</button>
 
 <script>
-// Stars background
+// ===== Floating random stars =====
 for(let i=0;i<50;i++){
-    let star=document.createElement("div");
-    star.className="star";
-    star.style.top=Math.random()*100+"%";
-    star.style.left=Math.random()*100+"%";
-    star.style.width=star.style.height=(Math.random()*2+1)+"px";
-    star.style.animationDuration=(Math.random()*5+3)+"s";
+    let star = document.createElement("div");
+    star.className = "star";
+    star.style.top = Math.random()*100 + "%";
+    star.style.left = Math.random()*100 + "%";
+    let size = Math.random()*2+1;
+    star.style.width = star.style.height = size + "px";
+    star.style.animationDuration = (Math.random()*5+3) + "s";
+    star.style.opacity = 0.5 + Math.random()*0.5;
     document.body.appendChild(star);
 }
 
-// P initials constellation
+// ===== P initials constellation =====
 const pCoords = [
     [30,30],[30,35],[30,40],[30,45],[30,50],
     [35,30],[40,30],[45,35],[45,40],[40,45],[35,45]
 ];
-pCoords.forEach(([x,y],i)=>{
-    let star=document.createElement("div");
-    star.className="star";
-    star.style.left=x+"%";
-    star.style.top=y+"%";
-    star.style.opacity=1;
+pCoords.forEach(([x,y])=>{
+    let star = document.createElement("div");
+    star.className = "star";
+    star.style.left = x+"%";
+    star.style.top = y+"%";
+    star.style.width = star.style.height = "2px";
+    star.style.opacity = 0.8;
     document.body.appendChild(star);
 });
 
-// Personalized blessings
+// ===== Hidden full name constellation =====
+const nameCoords = [
+  [20,30],[22,30],[24,30],[26,30],[28,30], // P
+  [30,30],[32,30],[34,30],[36,30], // r
+  [38,30],[40,30],[42,30],[44,30], // a
+  [46,30],[48,30],[50,30],[52,30], // t
+  [54,30],[56,30],[58,30], // i
+  [60,30],[62,30],[64,30],[66,30], // k
+  [68,30],[70,30],[72,30], // s
+  [74,30],[76,30],[78,30],[80,30] // h + a
+];
+nameCoords.forEach(([x,y],i)=>{
+    let star = document.createElement("div");
+    star.className = "star";
+    star.style.left = x+"%";
+    star.style.top = y+"%";
+    star.style.width = star.style.height = "2px";
+    star.style.opacity = 0; // hidden initially
+    document.body.appendChild(star);
+    
+    // slowly reveal stars for careful observers
+    setTimeout(()=>{
+        star.style.opacity = 0.7;
+    }, 5000 + i*200); // starts after 5s, staggered
+});
+
+// ===== Personalized blessings =====
 let blessings = [
     "Pratiksha, may your laughter ripple through every corner of your day and light up the world around you.",
     "May Pratiksha’s heart always feel the gentle warmth of love, peace, and quiet joy wherever she goes.",
@@ -108,7 +138,7 @@ let blessings = [
     "May Pratiksha’s spirit always dance freely, unshaken by worries, embraced by love and calm."
 ];
 
-// Shuffle blessings
+// ===== Shuffle blessings =====
 function shuffle(array){
     for(let i=array.length-1;i>0;i--){
         let j=Math.floor(Math.random()*(i+1));
@@ -119,7 +149,7 @@ function shuffle(array){
 blessings = shuffle(blessings);
 let used = [];
 
-// Typing effect
+// ===== Typing effect =====
 function typeWriter(text,i=0){
     if(i<text.length){
         document.getElementById("blessing").innerHTML += text.charAt(i);
@@ -127,7 +157,7 @@ function typeWriter(text,i=0){
     }
 }
 
-// Generate a new blessing
+// ===== Generate a new blessing =====
 function generateBlessing(){
     if(blessings.length === 0){
         blessings = shuffle(used);
