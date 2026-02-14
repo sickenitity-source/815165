@@ -8,175 +8,134 @@ body {
     margin: 0;
     height: 100vh;
     background: linear-gradient(135deg, #1e3a8a, #ffffff, #b76e79);
-    color: white;
-    font-family: Arial, sans-serif;
     display: flex;
-    flex-direction: column;
     justify-content: center;
     align-items: center;
-    text-align: center;
     overflow: hidden;
-    position: relative;
+    font-family: Arial, sans-serif;
+    color: white;
+    text-align: center;
 }
 h1 {
-    font-size: 42px;
-    margin-bottom: 30px;
+    position: absolute;
+    top: 20px;
+    width: 100%;
+    text-align: center;
+    font-size: 36px;
     color: #b76e79;
     text-shadow: 1px 1px 8px white;
 }
 #blessing {
+    position: absolute;
+    bottom: 50px;
+    width: 80%;
     font-size: 24px;
-    max-width: 600px;
-    min-height: 50px;
-    color: white;
     text-shadow: 1px 1px 6px #b76e79;
 }
+canvas {
+    position: absolute;
+}
 button {
-    padding: 12px 25px;
+    position: absolute;
+    bottom: 10px;
+    padding: 10px 20px;
     font-size: 18px;
-    background-color: #b76e79;
-    color: white;
     border: none;
     border-radius: 8px;
+    background: #b76e79;
+    color: white;
     cursor: pointer;
-    margin-top: 20px;
     transition: 0.3s;
 }
 button:hover {
-    background-color: white;
+    background: white;
     color: #b76e79;
     box-shadow: 0 0 12px #b76e79;
-}
-.star {
-    position: absolute;
-    width: 2px;
-    height: 2px;
-    background: white;
-    border-radius: 50%;
-    opacity: 0.5;
-    animation: twinkle 5s infinite;
-    transition: opacity 2s;
-}
-.letterStar {
-    background: #b76e79;
-    width: 5px;
-    height: 5px;
-    box-shadow: 0 0 8px #b76e79;
-    opacity: 1;
-}
-@keyframes twinkle {
-    0%, 100% {opacity: 0.2;}
-    50% {opacity: 1;}
 }
 </style>
 </head>
 <body>
 
-<h1>🌙 A Blessing for You, Pratiksha</h1>
+<h1>🌙 Blessings for Pratiksha</h1>
 <div id="blessing">Click the button to receive your blessing ✨</div>
 <button onclick="generateBlessing()">Reveal Blessing</button>
+<canvas id="starCanvas"></canvas>
 
 <script>
-// ===== Floating random stars =====
-for(let i=0;i<50;i++){
-    let star = document.createElement("div");
-    star.className = "star";
-    star.style.top = Math.random()*100 + "%";
-    star.style.left = Math.random()*100 + "%";
-    let size = Math.random()*2+1;
-    star.style.width = star.style.height = size + "px";
-    star.style.animationDuration = (Math.random()*5+3) + "s";
-    star.style.opacity = 0.5 + Math.random()*0.5;
-    document.body.appendChild(star);
+// ===== Canvas setup =====
+const canvas = document.getElementById('starCanvas');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+// ===== Draw stars forming text =====
+function drawTextStars(text) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.font = "bold 120px Arial";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    
+    // get text pixel data
+    const offCanvas = document.createElement("canvas");
+    offCanvas.width = canvas.width;
+    offCanvas.height = canvas.height;
+    const offCtx = offCanvas.getContext("2d");
+    offCtx.font = "bold 120px Arial";
+    offCtx.textAlign = "center";
+    offCtx.textBaseline = "middle";
+    offCtx.fillText(text, canvas.width/2, canvas.height/2);
+    
+    const imageData = offCtx.getImageData(0,0,canvas.width,canvas.height);
+    for(let y=0; y<canvas.height; y+=6){ // spacing between stars
+        for(let x=0; x<canvas.width; x+=6){
+            const i = (y*canvas.width + x) * 4;
+            if(imageData.data[i+3] > 128){ // alpha channel > 128
+                ctx.beginPath();
+                ctx.arc(x, y, 2, 0, Math.PI*2);
+                ctx.fillStyle = "#b76e79";
+                ctx.shadowColor = "#b76e79";
+                ctx.shadowBlur = 6;
+                ctx.fill();
+            }
+        }
+    }
 }
 
-// ===== PRATIKSHA letters in stars (grid method) =====
-const letters = {
-  "P":[
-    "1110",
-    "1001",
-    "1110",
-    "1000",
-    "1000"
-  ],
-  "R":[
-    "1110",
-    "1001",
-    "1110",
-    "1010",
-    "1001"
-  ],
-  "A":[
-    "0110",
-    "1001",
-    "1111",
-    "1001",
-    "1001"
-  ],
-  "T":[
-    "11111",
-    "00100",
-    "00100",
-    "00100",
-    "00100"
-  ],
-  "I":[
-    "111",
-    "010",
-    "010",
-    "010",
-    "111"
-  ],
-  "K":[
-    "1001",
-    "1010",
-    "1100",
-    "1010",
-    "1001"
-  ],
-  "S":[
-    "0111",
-    "1000",
-    "0110",
-    "0001",
-    "1110"
-  ],
-  "H":[
-    "1001",
-    "1001",
-    "1111",
-    "1001",
-    "1001"
-  ],
-  "A2":[
-    "0110",
-    "1001",
-    "1111",
-    "1001",
-    "1001"
-  ]
-};
+// ===== Random floating stars =====
+const floatingStars = [];
+for(let i=0;i<50;i++){
+    floatingStars.push({
+        x: Math.random()*canvas.width,
+        y: Math.random()*canvas.height,
+        r: Math.random()*2+1,
+        dx: (Math.random()-0.5)*0.5,
+        dy: (Math.random()-0.5)*0.5
+    });
+}
 
-let startX = 50; // starting left
-let startY = 100; // starting top
-const pixelSize = 15; // spacing
+function drawFloatingStars(){
+    ctx.fillStyle = "white";
+    floatingStars.forEach(s => {
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
+        ctx.fill();
+        s.x += s.dx;
+        s.y += s.dy;
+        if(s.x<0) s.x=canvas.width;
+        if(s.x>canvas.width) s.x=0;
+        if(s.y<0) s.y=canvas.height;
+        if(s.y>canvas.height) s.y=0;
+    });
+}
 
-const name = ["P","R","A","T","I","K","S","H","A2"];
-name.forEach(letter => {
-  const map = letters[letter];
-  for(let row=0; row<map.length; row++){
-    for(let col=0; col<map[row].length; col++){
-      if(map[row][col]=="1"){
-        let star = document.createElement("div");
-        star.className = "letterStar";
-        star.style.left = (startX + col*pixelSize) + "px";
-        star.style.top = (startY + row*pixelSize) + "px";
-        document.body.appendChild(star);
-      }
-    }
-  }
-  startX += (map[0].length + 1) * pixelSize; // spacing between letters
-});
+// ===== Animation loop =====
+function animate(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    drawTextStars("PRATIKSHA");
+    drawFloatingStars();
+    requestAnimationFrame(animate);
+}
+animate();
 
 // ===== Personalized blessings =====
 let blessings = [
@@ -205,7 +164,7 @@ let used = [];
 function typeWriter(text,i=0){
     if(i<text.length){
         document.getElementById("blessing").innerHTML += text.charAt(i);
-        setTimeout(()=>typeWriter(text,i+1),40);
+        setTimeout(()=>typeWriter(text,i+1),30);
     }
 }
 
