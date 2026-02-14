@@ -2,12 +2,12 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Shivratri Sky Blessing</title>
+<title>Shivratri Blessing for Pratiksha</title>
 <style>
 body {
     margin: 0;
     height: 100vh;
-    background: radial-gradient(circle at center, #1a1a2e, #0f0c29);
+    background: linear-gradient(135deg, #1e3a8a, #ffffff, #b76e79);
     color: white;
     font-family: Arial, sans-serif;
     display: flex;
@@ -16,41 +16,64 @@ body {
     align-items: center;
     text-align: center;
     overflow: hidden;
+    position: relative;
 }
 
 h1 {
+    font-size: 42px;
     margin-bottom: 30px;
+    color: #b76e79;
+    text-shadow: 1px 1px 8px white;
 }
 
 #blessing {
     font-size: 24px;
-    min-height: 40px;
     max-width: 600px;
+    min-height: 50px;
+    color: white;
+    text-shadow: 1px 1px 6px #b76e79;
 }
 
 button {
     padding: 12px 25px;
     font-size: 18px;
-    background-color: #6c5ce7;
+    background-color: #b76e79;
     color: white;
     border: none;
     border-radius: 8px;
     cursor: pointer;
     margin-top: 20px;
+    transition: 0.3s;
+}
+button:hover {
+    background-color: white;
+    color: #b76e79;
+    box-shadow: 0 0 12px #b76e79;
 }
 
-button:hover {
-    background-color: #8c7ae6;
+.star {
+    position: absolute;
+    background: white;
+    border-radius: 50%;
+    width: 2px;
+    height: 2px;
+    opacity: 0;
+    animation: twinkle 5s infinite;
+}
+@keyframes twinkle {
+    0%, 100% {opacity: 0.2;}
+    50% {opacity: 1;}
 }
 </style>
 </head>
 <body>
 
-<h1>🌙 A Blessing for You</h1>
+<h1>🌙 A Blessing for You, Pratiksha</h1>
 <div id="blessing"></div>
 <button onclick="generateBlessing()">Reveal Blessing</button>
 
 <script>
+// Blessings
 const blessings = [
     "May your strength rise quietly like the Himalayas.",
     "May your heart stay peaceful even in chaos.",
@@ -59,19 +82,43 @@ const blessings = [
     "Tonight, I silently pray for your happiness."
 ];
 
+// Typing effect
 function typeWriter(text, i = 0) {
-    if (i < text.length) {
+    if(i < text.length) {
         document.getElementById("blessing").innerHTML += text.charAt(i);
-        setTimeout(() => typeWriter(text, i + 1), 40);
+        setTimeout(()=>typeWriter(text,i+1),40);
     }
 }
-
 function generateBlessing() {
     const randomIndex = Math.floor(Math.random() * blessings.length);
     const message = blessings[randomIndex];
     document.getElementById("blessing").innerHTML = "";
     typeWriter(message);
 }
+
+// Function to create stars forming "P" for Pratiksha
+function createStar(x, y, size=2, delay=0) {
+    let star = document.createElement("div");
+    star.className = "star";
+    star.style.left = x + "%";
+    star.style.top = y + "%";
+    star.style.width = star.style.height = size + "px";
+    star.style.animationDelay = delay + "s";
+    document.body.appendChild(star);
+    star.style.opacity = 1;
+}
+
+// Generate random stars for background
+for(let i=0;i<50;i++){
+    createStar(Math.random()*100, Math.random()*100, Math.random()*2+1, Math.random()*5);
+}
+
+// Generate faint "P" constellation
+const pCoords = [
+    [30,30],[30,35],[30,40],[30,45],[30,50],
+    [35,30],[40,30],[45,35],[45,40],[40,45],[35,45]
+];
+pCoords.forEach(([x,y],i)=>createStar(x,y,2,i*0.1));
 </script>
 
 </body>
