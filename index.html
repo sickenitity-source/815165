@@ -49,13 +49,20 @@ button:hover {
 }
 .star {
     position: absolute;
-    background: white;
-    border-radius: 50%;
     width: 2px;
     height: 2px;
+    background: white;
+    border-radius: 50%;
     opacity: 0.5;
     animation: twinkle 5s infinite;
     transition: opacity 2s;
+}
+.letterStar {
+    background: #b76e79;
+    width: 5px;
+    height: 5px;
+    box-shadow: 0 0 8px #b76e79;
+    opacity: 1;
 }
 @keyframes twinkle {
     0%, 100% {opacity: 0.2;}
@@ -83,43 +90,92 @@ for(let i=0;i<50;i++){
     document.body.appendChild(star);
 }
 
-// ===== P initials constellation =====
-const pCoords = [
-    [30,30],[30,35],[30,40],[30,45],[30,50],
-    [35,30],[40,30],[45,35],[45,40],[40,45],[35,45]
-];
-pCoords.forEach(([x,y])=>{
-    let star = document.createElement("div");
-    star.className = "star";
-    star.style.left = x+"%";
-    star.style.top = y+"%";
-    star.style.width = star.style.height = "2px";
-    star.style.opacity = 0.8;
-    document.body.appendChild(star);
-});
+// ===== PRATIKSHA letters in stars (grid method) =====
+const letters = {
+  "P":[
+    "1110",
+    "1001",
+    "1110",
+    "1000",
+    "1000"
+  ],
+  "R":[
+    "1110",
+    "1001",
+    "1110",
+    "1010",
+    "1001"
+  ],
+  "A":[
+    "0110",
+    "1001",
+    "1111",
+    "1001",
+    "1001"
+  ],
+  "T":[
+    "11111",
+    "00100",
+    "00100",
+    "00100",
+    "00100"
+  ],
+  "I":[
+    "111",
+    "010",
+    "010",
+    "010",
+    "111"
+  ],
+  "K":[
+    "1001",
+    "1010",
+    "1100",
+    "1010",
+    "1001"
+  ],
+  "S":[
+    "0111",
+    "1000",
+    "0110",
+    "0001",
+    "1110"
+  ],
+  "H":[
+    "1001",
+    "1001",
+    "1111",
+    "1001",
+    "1001"
+  ],
+  "A2":[
+    "0110",
+    "1001",
+    "1111",
+    "1001",
+    "1001"
+  ]
+};
 
-// ===== Visible full name constellation for testing =====
-const letters = [
-  [50,10],[50,12],[50,14],[50,16],[50,18], // P
-  [55,10],[55,12],[55,14],[55,16],[55,18], // R
-  [60,10],[60,12],[60,14],[60,16],[60,18], // A
-  [65,10],[65,12],[65,14],[65,16],[65,18], // T
-  [70,10],[70,12],[70,14],[70,16],[70,18], // I
-  [75,10],[75,12],[75,14],[75,16],[75,18], // K
-  [80,10],[80,12],[80,14],[80,16],[80,18], // S
-  [85,10],[85,12],[85,14],[85,16],[85,18], // H
-  [90,10],[90,12],[90,14],[90,16],[90,18]  // A
-];
+let startX = 50; // starting left
+let startY = 100; // starting top
+const pixelSize = 15; // spacing
 
-letters.forEach(([x,y])=>{
-    let star = document.createElement("div");
-    star.className = "star";
-    star.style.left = x+"%";
-    star.style.top = y+"%";
-    star.style.width = star.style.height = "4px"; // bigger for clarity
-    star.style.opacity = 1; // fully visible for testing
-    star.style.boxShadow = "0 0 8px #b76e79"; // soft glow
-    document.body.appendChild(star);
+const name = ["P","R","A","T","I","K","S","H","A2"];
+name.forEach(letter => {
+  const map = letters[letter];
+  for(let row=0; row<map.length; row++){
+    for(let col=0; col<map[row].length; col++){
+      if(map[row][col]=="1"){
+        let star = document.createElement("div");
+        star.className = "letterStar";
+        star.style.left = (startX + col*pixelSize) + "px";
+        star.style.top = (startY + row*pixelSize) + "px";
+        document.body.appendChild(star);
+      }
+    }
+  }
+  startX += (map[0].length + 1) * pixelSize; // spacing between letters
 });
 
 // ===== Personalized blessings =====
@@ -136,7 +192,6 @@ let blessings = [
     "May Pratiksha’s spirit always dance freely, unshaken by worries, embraced by love and calm."
 ];
 
-// ===== Shuffle blessings =====
 function shuffle(array){
     for(let i=array.length-1;i>0;i--){
         let j=Math.floor(Math.random()*(i+1));
@@ -147,7 +202,6 @@ function shuffle(array){
 blessings = shuffle(blessings);
 let used = [];
 
-// ===== Typing effect =====
 function typeWriter(text,i=0){
     if(i<text.length){
         document.getElementById("blessing").innerHTML += text.charAt(i);
@@ -155,7 +209,6 @@ function typeWriter(text,i=0){
     }
 }
 
-// ===== Generate a new blessing =====
 function generateBlessing(){
     if(blessings.length === 0){
         blessings = shuffle(used);
