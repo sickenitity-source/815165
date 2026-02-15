@@ -12,14 +12,10 @@ body {
     font-family: Arial, sans-serif;
     color: white;
     text-align: center;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
 }
 h1 {
     font-size: 42px;
-    margin-bottom: 20px;
+    margin: 20px;
     color: #b76e79;
     text-shadow: 1px 1px 8px white;
 }
@@ -28,7 +24,7 @@ h1 {
     max-width: 600px;
     min-height: 50px;
     text-shadow: 1px 1px 6px #b76e79;
-    margin-top: 20px;
+    margin: 20px auto;
 }
 button {
     padding: 12px 25px;
@@ -38,29 +34,13 @@ button {
     border: none;
     border-radius: 8px;
     cursor: pointer;
-    margin-top: 20px;
+    margin: 20px;
     transition: 0.3s;
 }
 button:hover {
     background-color: white;
     color: #b76e79;
     box-shadow: 0 0 12px #b76e79;
-}
-.star {
-    position: absolute;
-    width: 2px;
-    height: 2px;
-    background: white;
-    border-radius: 50%;
-    opacity: 0.5;
-}
-.letterStar {
-    width: 5px;
-    height: 5px;
-    background: #b76e79;
-    box-shadow: 0 0 8px #b76e79;
-    border-radius: 50%;
-    position: absolute;
 }
 #moon {
     position: absolute;
@@ -81,38 +61,16 @@ button:hover {
 <div id="blessing">Click the button to receive your blessing ✨</div>
 <button onclick="generateBlessing()">Reveal Blessing</button>
 
+<canvas id="starCanvas"></canvas>
+
 <script>
-// ===== Floating random stars =====
-const stars = [];
-for(let i=0;i<100;i++){
-    const star = document.createElement("div");
-    star.className = "star";
-    star.style.top = Math.random()*window.innerHeight + "px";
-    star.style.left = Math.random()*window.innerWidth + "px";
-    star.speedX = (Math.random()-0.5)*0.5;
-    star.speedY = (Math.random()-0.5)*0.5;
-    document.body.appendChild(star);
-    stars.push(star);
-}
+// ===== Canvas setup =====
+const canvas = document.getElementById('starCanvas');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
 
-function moveStars(){
-    stars.forEach(s => {
-        let x = parseFloat(s.style.left);
-        let y = parseFloat(s.style.top);
-        x += s.speedX;
-        y += s.speedY;
-        if(x<0) x=window.innerWidth;
-        if(x>window.innerWidth) x=0;
-        if(y<0) y=window.innerHeight;
-        if(y>window.innerHeight) y=0;
-        s.style.left = x + "px";
-        s.style.top = y + "px";
-    });
-    requestAnimationFrame(moveStars);
-}
-moveStars();
-
-// ===== Draw letter P using stars =====
+// ===== Letter P pixel map =====
 const letterP = [
   "1110",
   "1001",
@@ -120,22 +78,66 @@ const letterP = [
   "1000",
   "1000"
 ];
+const pixelSize = 20;
+const startX = canvas.width/2 - 40;
+const startY = canvas.height/2 - 50;
+let targetPositions = [];
 
-const startX = window.innerWidth/2 - 30; // center horizontally
-const startY = window.innerHeight/2 - 50; // center vertically
-const pixelSize = 15;
-
+// generate target positions for P
 for(let row=0; row<letterP.length; row++){
     for(let col=0; col<letterP[row].length; col++){
-        if(letterP[row][col]=="1"){
-            let star = document.createElement("div");
-            star.className = "letterStar";
-            star.style.left = (startX + col*pixelSize) + "px";
-            star.style.top = (startY + row*pixelSize) + "px";
-            document.body.appendChild(star);
+        if(letterP[row][col] == "1"){
+            targetPositions.push({
+                x: startX + col*pixelSize + Math.random()*5,
+                y: startY + row*pixelSize + Math.random()*5
+            });
         }
     }
 }
+
+// ===== Stars =====
+const stars = [];
+const totalStars = 150;
+for(let i=0; i<totalStars; i++){
+    stars.push({
+        x: Math.random()*canvas.width,
+        y: Math.random()*canvas.height,
+        dx: (Math.random()-0.5)*1.5,
+        dy: (Math.random()-0.5)*1.5,
+        target: i<targetPositions.length ? targetPositions[i] : null
+    });
+}
+
+// ===== Animation =====
+function animate(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    
+    stars.forEach(s => {
+        // move towards target if exists
+        if(s.target){
+            let tx = s.target.x - s.x;
+            let ty = s.target.y - s.y;
+            s.x += tx*0.05;
+            s.y += ty*0.05;
+        } else {
+            // random float
+            s.x += s.dx;
+            s.y += s.dy;
+            if(s.x<0) s.x = canvas.width;
+            if(s.x>canvas.width) s.x = 0;
+            if(s.y<0) s.y = canvas.height;
+            if(s.y>canvas.height) s.y = 0;
+        }
+        // draw star
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, 2, 0, Math.PI*2);
+        ctx.fillStyle = s.target ? "#b76e79" : "white";
+        ctx.fill();
+    });
+    
+    requestAnimationFrame(animate);
+}
+animate();
 
 // ===== Personalized blessings =====
 let blessings = [
