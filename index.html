@@ -76,16 +76,52 @@ const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
+// ===== Letters pixel maps =====
+// Each letter is a 5x5 grid (1=star, 0=empty)
+const letters = {
+    "I": ["111","010","010","010","111"],
+    "L": ["100","100","100","100","111"],
+    "O": ["111","101","101","101","111"],
+    "V": ["101","101","101","101","010"],
+    "E": ["111","100","111","100","111"],
+    "Y": ["101","101","010","010","010"],
+    "U": ["101","101","101","101","111"],
+    " ": ["000","000","000","000","000"] // space
+};
+
+// Word to display
+const word = "I LOVE YOU";
+
+// Parameters
+const pixelSize = 15;
+let startX = canvas.width/2 - (word.length*pixelSize*5)/2;
+const startY = canvas.height/2 - 50;
+let starPositions = [];
+
+// Generate positions for all letters
+for(let w=0; w<word.length; w++){
+    let letter = word[w];
+    let map = letters[letter] || letters[" "];
+    for(let row=0; row<map.length; row++){
+        for(let col=0; col<map[row].length; col++){
+            if(map[row][col]=="1"){
+                starPositions.push({
+                    x: startX + w*pixelSize*6 + col*pixelSize + Math.random()*2,
+                    y: startY + row*pixelSize + Math.random()*2
+                });
+            }
+        }
+    }
+}
+
 // ===== Stars =====
 const stars = [];
-const totalStars = 150;
-for(let i=0; i<totalStars; i++){
+for(let i=0; i<starPositions.length; i++){
     stars.push({
-        x: Math.random()*canvas.width,
-        y: Math.random()*canvas.height,
-        dx: (Math.random()-0.5)*1.5,
-        dy: (Math.random()-0.5)*1.5,
-        radius: Math.random()*1.5 + 1
+        x: starPositions[i].x,
+        y: starPositions[i].y,
+        radius: Math.random()*1.5 + 1,
+        twinkle: Math.random()*0.05
     });
 }
 
@@ -94,13 +130,10 @@ function animate(){
     ctx.clearRect(0,0,canvas.width,canvas.height);
     
     stars.forEach(s => {
-        s.x += s.dx;
-        s.y += s.dy;
-        if(s.x<0) s.x = canvas.width;
-        if(s.x>canvas.width) s.x = 0;
-        if(s.y<0) s.y = canvas.height;
-        if(s.y>canvas.height) s.y = 0;
-
+        // twinkle effect
+        s.radius += s.twinkle;
+        if(s.radius>2.5 || s.radius<1) s.twinkle *= -1;
+        
         ctx.beginPath();
         ctx.arc(s.x, s.y, s.radius, 0, Math.PI*2);
         ctx.fillStyle = "white";
