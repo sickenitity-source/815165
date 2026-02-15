@@ -54,6 +54,14 @@ button:hover {
     border-radius: 50%;
     opacity: 0.5;
 }
+.letterStar {
+    width: 5px;
+    height: 5px;
+    background: #b76e79;
+    box-shadow: 0 0 8px #b76e79;
+    border-radius: 50%;
+    position: absolute;
+}
 #moon {
     position: absolute;
     top: 10%;
@@ -74,7 +82,7 @@ button:hover {
 <button onclick="generateBlessing()">Reveal Blessing</button>
 
 <script>
-// ===== Floating stars =====
+// ===== Floating random stars =====
 const stars = [];
 for(let i=0;i<100;i++){
     const star = document.createElement("div");
@@ -103,6 +111,31 @@ function moveStars(){
     requestAnimationFrame(moveStars);
 }
 moveStars();
+
+// ===== Draw letter P using stars =====
+const letterP = [
+  "1110",
+  "1001",
+  "1110",
+  "1000",
+  "1000"
+];
+
+const startX = window.innerWidth/2 - 30; // center horizontally
+const startY = window.innerHeight/2 - 50; // center vertically
+const pixelSize = 15;
+
+for(let row=0; row<letterP.length; row++){
+    for(let col=0; col<letterP[row].length; col++){
+        if(letterP[row][col]=="1"){
+            let star = document.createElement("div");
+            star.className = "letterStar";
+            star.style.left = (startX + col*pixelSize) + "px";
+            star.style.top = (startY + row*pixelSize) + "px";
+            document.body.appendChild(star);
+        }
+    }
+}
 
 // ===== Personalized blessings =====
 let blessings = [
